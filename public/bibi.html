@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibi EPUB Reader</title>
+
+    <!-- Bibi Styles -->
+    <link id="bibi-style" rel="stylesheet" href="/bibi/__src/bibi/resources/styles/bibi.css" />
+    <link id="bibi-dress" rel="stylesheet" href="/bibi/__src/bibi/wardrobe/everyday/bibi.dress.css" />
+</head>
+<body class="epub-viewer">
+    <div class="epub-reader-container">
+        <div id="bibi-book-data" data-bibi-book-mimetype="application/epub+zip" hidden="hidden">
+        </div>
+    </div>
+
+    <!-- Bibi Scripts -->
+    <script id="bibi-script" src="/bibi/__src/bibi/resources/scripts/bibi.js"></script>
+    <script id="bibi-preset" src="/bibi/__src/bibi/presets/default.js" data-bibi-bookshelf=""></script>
+
+    <script>
+        // URLパラメータからbookのURLを取得
+        const params = new URLSearchParams(window.location.search);
+        const bookData = params.get('data');
+
+        if (bookData) {
+            try {
+                const bookUrl = atob(bookData);
+                // BibiにbookパラメータをURLに追加して再読み込み
+                if (!params.get('book')) {
+                    window.location.search = `?book=${encodeURIComponent(bookUrl)}`;
+                }
+            } catch (e) {
+                document.body.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100vh;">Error: Invalid data parameter</div>';
+            }
+        } else if (!params.get('book')) {
+            document.body.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100vh;">Error: No book specified. Use ?data= or ?book= parameter</div>';
+        }
+    </script>
+</body>
+</html>
