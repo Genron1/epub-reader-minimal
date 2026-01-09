@@ -4,8 +4,6 @@ import React from 'react';
 
 import EpubReader from '@/components/EpubReader';
 
-type Direction = 'rtl' | 'ltr';
-
 const Page = () => {
   const router = useRouter();
 
@@ -26,9 +24,8 @@ const Page = () => {
   }
 
   const epubUrl = atob(router.query.data as string);
-  const direction = router.query.direction as Direction;
 
-  return <EpubReader url={epubUrl} direction={direction} />;
+  return <EpubReader url={epubUrl} />;
 };
 
 export default Page;

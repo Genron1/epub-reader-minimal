@@ -15,11 +15,8 @@ const ReactReader = dynamic(
 /* eslint-enable @typescript-eslint/naming-convention */
 /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 
-type Direction = 'rtl' | 'ltr';
-
 interface EpubReaderProps {
   url: string;
-  direction?: Direction;
 }
 
 const EpubReader = (props: EpubReaderProps) => {
@@ -31,7 +28,6 @@ const EpubReader = (props: EpubReaderProps) => {
         url={props.url}
         location={location}
         locationChanged={(epubcfi: string) => setLocation(epubcfi)}
-        direction={props.direction}
       />
     </div>
   );
