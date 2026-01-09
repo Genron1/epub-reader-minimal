@@ -1,12 +1,7 @@
 # EPUB Reader Minimal
 
-genron-frontendのコーディング規約に準拠した、epubリーダーのミニマム実装です。
+epubリーダーのミニマム実装です。
 
-## 特徴
-
-- Next.js + TypeScript + React
-- genron-frontendのESLint/Prettier設定を使用
-- react-readerライブラリを使用したシンプルなEPUBリーダー
 
 ## セットアップ
 
@@ -24,7 +19,14 @@ npm run dev
 
 ## 使い方
 
-### 方法1: read.tsx（元のgenron-frontendと同じ方式）
+このプロジェクトでは2種類のEPUBリーダーを提供しています：
+
+| コンポーネント | 利用技術 | 指定方法（例） | 補足 | ドキュメント |
+|--------------|---------|--------------|------|------------|
+| React Reader | React | `?data=<base64エンコーディングしたepubのURL>` | | [GitHub](https://github.com/gerhardsletten/react-reader) |
+| Bibi | JavaScript | `?book=/books/sample.epub` | デフォルトではCORSの制限があり、ファイルも同じサーバにおいている。Shopifyだったらcdnも同じオリジンだからURLでもいけるかも | [GitHub](https://github.com/satorumurmur/bibi) |
+
+### React Readerの使い方
 
 Base64エンコードされたURLをdataパラメータで渡します：
 
@@ -32,19 +34,13 @@ Base64エンコードされたURLをdataパラメータで渡します：
 http://localhost:3000/read?data=<base64-encoded-url>&direction=ltr
 ```
 
-### 方法2: index.tsx（シンプルな方式）
+### Bibiの使い方
 
-URLをそのまま渡します：
+EPUBファイルのパスをbookパラメータで渡します：
 
 ```
-http://localhost:3000/?url=https://example.com/book.epub&direction=ltr
+http://localhost:3000/bibi.html?book=/books/sample.epub
 ```
-
-## パラメータ
-
-- `url` (index.tsxの場合): EPUBファイルのURL
-- `data` (read.tsxの場合): Base64エンコードされたEPUBファイルのURL
-- `direction`: ページめくりの方向 (`ltr`: 左から右, `rtl`: 右から左)
 
 ## プロジェクト構造
 
@@ -52,10 +48,14 @@ http://localhost:3000/?url=https://example.com/book.epub&direction=ltr
 epub-reader-minimal/
 ├── src/
 │   ├── components/
-│   │   └── EpubReader.tsx    # EPUBリーダーコンポーネント
+│   │   └── EpubReader.tsx    # React Reader コンポーネント
 │   └── pages/
-│       ├── index.tsx          # シンプルな使用方法のページ
-│       └── read.tsx           # genron-frontendと同じ方式のページ
+│       ├── index.tsx          # ランディングページ（リーダー選択画面）
+│       └── read.tsx           # React Reader ページ
+├── public/
+│   ├── bibi/                  # Bibi リーダー
+│   ├── bibi.html              # Bibi エントリーポイント
+│   └── books/                 # EPUBファイル格納用
 ├── package.json
 ├── tsconfig.json
 ├── .eslintrc.json
@@ -63,12 +63,4 @@ epub-reader-minimal/
 └── next.config.js
 ```
 
-## コーディング規約
 
-このプロジェクトはgenron-frontendのコーディング規約に従っています：
-
-- Airbnb ESLint設定
-- TypeScriptの厳密な型チェック
-- Prettierによるコードフォーマット
-- importの順序とグループ化
-- 命名規則（camelCase, PascalCase）
