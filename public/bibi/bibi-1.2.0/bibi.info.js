@@ -25,8 +25,8 @@ Bibi.Arguments = (() => {
     }, {});
 })();
 
-Bibi.ForPack = (Bibi.Arguments['pack']);
-Bibi.WithBCK = (Bibi.Arguments['bc'] || Bibi.ForPack);
+Bibi.ForPack = (Bibi.Arguments['pack'] || Bibi.Arguments['env'] === 'pack');
+Bibi.WithBCK = (Bibi.Arguments['bc'] || Bibi.Arguments['env'] === 'bc' || Bibi.ForPack);
 
 Bibi.ARCHIVES = '__archives', Bibi.ARCHIVETMP = Bibi.ARCHIVES + '/.tmp', Bibi.DIST = '__dist', Bibi.SRC = '__src', Bibi.SRCBC = '__src__back-compat';
 

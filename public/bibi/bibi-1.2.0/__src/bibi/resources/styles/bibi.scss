@@ -4,8 +4,8 @@
  * // through a package maintained by Ravindra Marella. - https://marella.github.io/material-icons
  * // Licensed under the Apache License Version 2.0 - https://www.apache.org/licenses/LICENSE-2.0
  */
-$material-icons-font-path: '~material-icons/iconfont/';
-@import "~material-icons/iconfont/material-icons.scss";
+$material-icons-font-path: 'material-icons/iconfont/';
+@import "material-icons/iconfont/material-icons.scss";
 /*!
  *
  *  # Bibi Style                                                 (℠)
@@ -13,5 +13,5 @@ $material-icons-font-path: '~material-icons/iconfont/';
  */
 
 $images-path: './images';
-@import "#globals";
+@import "globals";
 @import "@parts";

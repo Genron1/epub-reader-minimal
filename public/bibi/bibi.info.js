@@ -25,10 +25,10 @@ Bibi.Arguments = (() => {
     }, {});
 })();
 
-Bibi.ForPack = (Bibi.Arguments['pack']);
-Bibi.WithBCK = (Bibi.Arguments['bc'] || Bibi.ForPack);
+Bibi.ForPack = (Bibi.Arguments['pack'] || Bibi.Arguments['env'] === 'pack');
+Bibi.WithBCK = (Bibi.Arguments['bc'] || Bibi.Arguments['env'] === 'bc' || Bibi.ForPack);
 
-Bibi.ARCHIVES = '__archives', Bibi.ARCHIVETMP = Bibi.ARCHIVES + '/.tmp', Bibi.DIST = '__dist', Bibi.SRC = '__src', Bibi.SRCBC = '__src__back-compat';
+Bibi.ARCHIVES = '__archives', Bibi.ARCHIVETMP = Bibi.ARCHIVES + '/.tmp', Bibi.DIST = '__dist', Bibi.SRC = 'bibi-1.2.0/__src', Bibi.SRCBC = 'bibi-1.2.0/__src__back-compat';
 
 Bibi.Dresses = (_ => {
     const Dresses = require('./' + Bibi.SRC + '/bibi/wardrobe/_dresses.js') || {};

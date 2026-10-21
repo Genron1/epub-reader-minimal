@@ -1,7 +1,8 @@
+import Link from 'next/link';
+
 import React from 'react';
 
-const Page = () => {
-  return (
+const Page = () => (
     <div
       style={{
         height: '100vh',
@@ -68,9 +69,9 @@ const Page = () => {
                     ?data=&lt;base64エンコーディングしたepubのURL&gt;
                   </code>
                 </td>
-                <td style={{ padding: '0.75rem', fontSize: '0.85rem' }}></td>
+                <td style={{ padding: '0.75rem', fontSize: '0.85rem' }} />
                 <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                  <a
+                  <Link
                     href="/read?data=aHR0cHM6Ly9kMXdoYzJza2p5cHhicS5jbG91ZGZyb250Lm5ldC90bXAvMjAyNjAxMDcxNTE0MTFfbDAyYTJ0Y2xqeHplNm0weGQ1bTY3MnppNndvaWRyOHcuZXB1Yg%3D%3D"
                     style={{
                       color: '#0070f3',
@@ -78,7 +79,7 @@ const Page = () => {
                     }}
                   >
                     link
-                  </a>
+                  </Link>
                 </td>
                 <td style={{ padding: '0.75rem', textAlign: 'center' }}>
                   <a
@@ -142,6 +143,5 @@ const Page = () => {
         </div>
     </div>
   );
-};
 
 export default Page;
