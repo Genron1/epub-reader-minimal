@@ -12,10 +12,9 @@ const Path = require('path'), resolvePath = (..._) => Path.resolve(__dirname, _.
 const Package = require('./package.json');
 const Bibi = require('./bibi.info.js');
 
-const HardSourcePlugin = require('hard-source-webpack-plugin');
-const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
+const FixStyleOnlyEntriesPlugin = require('webpack-remove-empty-scripts');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
-const StringReplacePlugin = require('string-replace-webpack-plugin');
+const replace = options => ({ loader: resolvePath('replace-loader.cjs'), options });
 const TerserPlugin = require('terser-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
@@ -26,6 +25,7 @@ const IsDev = (Bibi.Arguments['mode'] === 'development');
 
 const Config = {
     mode: IsDev ? 'development' : 'production',
+    target: ['web', 'es5'],
     stats: 'errors-warnings',//IsDev ? 'errors-warnings' : 'normal',
     performance: { maxEntrypointSize: 1000000, maxAssetSize: 1000000, hints: false  },
     optimization: { minimizer: [] },
@@ -57,8 +57,7 @@ const Config = {
     }),
     plugins: (PathLists => { const Patterns = [];
         for(const SrcDir in PathLists) if(PathLists[SrcDir].length) PathLists[SrcDir].forEach(P => Patterns.push({ context: resolvePath(SrcDir), from: P, to: '.' }));
-        return [new CopyPlugin(Patterns)]; // for CopyWebpackPlugin v5.1.1
-    //  return [new CopyPlugin({ patterns: Patterns })]; // for CopyWebpackPlugin v6.x.x
+        return [new CopyPlugin({ patterns: Patterns })];
     })({
         [Bibi.SRC]: [
             'bibi/*.html',
@@ -78,8 +77,7 @@ const Config = {
     }).concat([
         new FixStyleOnlyEntriesPlugin({ extensions: ['scss', 'css'] }),
         new MiniCSSExtractPlugin({ filename: '[name]' }),
-        new BrowserSyncPlugin(require('./bs-config.js'), { reload: true, injectCss: true }),
-        new StringReplacePlugin()
+        ...(IsDev ? [new BrowserSyncPlugin(require('./bs-config.js'), { reload: true, injectCss: true })] : [])
     ]),
     module: { rules: [{
         test: /\.m?js$/,
@@ -100,10 +98,7 @@ const Config = {
             resolvePath(Bibi.SRC, 'bibi/resources/scripts/bibi.heart.js')
         ],
         use: [
-            StringReplacePlugin.replace({ replacements: [{
-                pattern: /____Bibi-Version____/ig,
-                replacement: () => Bibi.version
-            }]})
+            replace({ version: Bibi.version })
         ]
     }]}
 };
@@ -119,15 +114,15 @@ const Config = {
             importLoaders: 2
         }},
         { loader: 'postcss-loader', options: {
-            config: {
-                ctx: {
-                    'postcss-cssnext': BrowsersList,//'autoprefixer': { grid: true },
-                    'cssnano': { zindex: false }
-                }
+            postcssOptions: {
+                config: false,
+                plugins: [require('postcss-preset-env')({ browsers: BrowsersList }), require('cssnano')({ preset: ['default', { zindex: false }] })]
             },
             sourceMap: IsDev
         }},
         { loader: 'sass-loader', options: {
+            webpackImporter: false,
+            sassOptions: { loadPaths: [resolvePath('node_modules')] },
             sourceMap: IsDev
         }}
     ];
@@ -139,10 +134,7 @@ const Config = {
         ],
         use: [
             MiniCSSExtractPlugin.loader,
-            StringReplacePlugin.replace({ replacements: [{
-                pattern: IsDev ? null : /@charset \\"UTF-8\\";\\n?/ig,
-                replacement: () => ''
-            }]})
+            replace({ stripCharset: !IsDev })
         ].concat(getCommonLoadersForCSS({ url: true, import: true }))
     });
     Config.module.rules.push({
@@ -181,16 +173,12 @@ if(IsDev) {
             resolvePath(Bibi.SRC, 'bibi/resources/scripts/bibi.heart.js')
         ],
         use: [
-            StringReplacePlugin.replace({ replacements: [{
-                pattern: /$/,
-                replacement: () => '\n' + `Bibi.Dev = true;`
-            }]})
+            replace({ development: true })
         ]
     });
 } else {
     for(const B in Bibi.Banners) if(B && Bibi.Banners[B]) Config.plugins.push(new Webpack.BannerPlugin({ test: B, banner: Bibi.Banners[B], raw: true }));
     Config.optimization.minimizer.push(new TerserPlugin({
-        cache: true,
         parallel: true,
         extractComments: false,
         terserOptions: {
